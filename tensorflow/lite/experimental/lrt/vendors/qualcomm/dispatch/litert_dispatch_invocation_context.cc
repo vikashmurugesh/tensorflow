@@ -56,6 +56,10 @@ LiteRtDispatchInvocationContextT::LiteRtDispatchInvocationContextT(
       inputs_(context_binary_info.Graphs()[graph_index].Inputs()),
       outputs_(context_binary_info.Graphs()[graph_index].Outputs()) {}
 
+LiteRtDispatchInvocationContextT::~LiteRtDispatchInvocationContextT() {
+  qnn_manager_.FreeContext();
+}
+
 absl::StatusOr<LiteRtDispatchInvocationContextT::Ptr>
 LiteRtDispatchInvocationContextT::Create(
     QnnManager& qnn, LiteRtDispatchDeviceContextT& device_context,
@@ -112,6 +116,7 @@ absl::StatusOr<LiteRtTensorBufferRequirements> GetTensorBufferRequirements(
 
   static constexpr LiteRtTensorBufferType supported_tensor_buffer_types[] = {
       kLiteRtTensorBufferTypeFastRpc,
+      kLiteRtTensorBufferTypeDmaBuf,
   };
   int num_supported_tensor_buffer_types =
       sizeof(supported_tensor_buffer_types) /
